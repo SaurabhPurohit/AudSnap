@@ -23,10 +23,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.audsnap.FragementHandler;
-import com.audsnap.FriendsActivityFragment;
 import com.audsnap.R;
-import com.audsnap.databaseoperations.InsertUsername;
 import com.edmodo.cropper.CropImageView;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -40,12 +37,9 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
-import com.squareup.picasso.RequestCreator;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 
 public class ProfileActivity extends AppCompatActivity {
 

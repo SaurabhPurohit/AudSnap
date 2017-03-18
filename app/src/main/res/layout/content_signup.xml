@@ -11,7 +11,7 @@
     android:orientation="vertical"
     android:background="@color/colorPrimary"
     app:layout_behavior="@string/appbar_scrolling_view_behavior"
-    tools:context="com.audsnap.SignupActivity"
+    tools:context="com.audsnap.workingapp.SignupActivity"
     tools:showIn="@layout/activity_signup">
 
 <LinearLayout

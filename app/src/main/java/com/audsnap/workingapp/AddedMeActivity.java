@@ -1,6 +1,5 @@
-package com.audsnap;
+package com.audsnap.workingapp;
 
-import android.app.Activity;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -9,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.TextView;
 
+import com.audsnap.R;
 import com.audsnap.adapter.AddedMeAdapter;
 import com.audsnap.adapter.AddedMeViewItem;
 import com.google.firebase.auth.FirebaseAuth;

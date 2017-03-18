@@ -1,4 +1,4 @@
-package com.audsnap;
+package com.audsnap.workingapp;
 
 import android.R;
 import android.content.Context;

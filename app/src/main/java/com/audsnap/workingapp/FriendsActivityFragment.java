@@ -1,4 +1,4 @@
-package com.audsnap;
+package com.audsnap.workingapp;
 
 import android.content.Intent;
 import android.support.annotation.Nullable;
@@ -14,6 +14,7 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.audsnap.R;
 import com.audsnap.workingapp.DisplayUserName;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;

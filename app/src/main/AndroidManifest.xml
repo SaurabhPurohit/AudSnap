@@ -13,7 +13,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".FragementHandler">
+        <activity android:name=".workingapp.FragementHandler">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -21,11 +21,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SignupActivity"
+            android:name=".workingapp.SignupActivity"
             android:label="@string/title_activity_signup"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".SigninActivity"
+            android:name=".workingapp.SigninActivity"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".workingapp.RegisterUsername"
@@ -37,7 +37,7 @@
             android:theme="@style/AppTheme.NoActionBar">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value="com.audsnap.FragementHandler" />
+                android:value="com.audsnap.workingapp.FragementHandler" />
         </activity>
         <activity
             android:name=".workingapp.FullImageviewActivity"
@@ -54,7 +54,7 @@
             android:value="@string/facebook_app_id" />
 
         <activity
-            android:name=".SearchFriendActivity"
+            android:name=".workingapp.SearchFriendActivity"
             android:label="@string/title_activity_search_friend"
             android:theme="@style/AppTheme.NoActionBar">
 
@@ -62,11 +62,11 @@
         </activity>
 
         <activity
-            android:name=".AddedMeActivity"
+            android:name=".workingapp.AddedMeActivity"
             android:theme="@style/AppTheme.NoActionBar">
         <meta-data
             android:name="android.support.PARENT_ACTIVITY"
-            android:value="com.audsnap.AddedMeActivity" />
+            android:value="com.audsnap.workingapp.AddedMeActivity" />
         </activity>
 
     </application>

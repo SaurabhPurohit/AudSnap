@@ -5,11 +5,11 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:id="@+id/root_layout"
-    tools:context="com.audsnap.FragementHandler">
+    tools:context="com.audsnap.workingapp.FragementHandler">
 
 
 
-    <com.audsnap.SlidingTabLayout
+    <com.audsnap.workingapp.SlidingTabLayout
         android:id="@+id/tabs"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
