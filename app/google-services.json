@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "444953707092",
+    "firebase_url": "https://project-527458073545831192.firebaseio.com",
+    "project_id": "project-527458073545831192",
+    "storage_bucket": "project-527458073545831192.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:444953707092:android:7759c9b7454b91c5",
+        "android_client_info": {
+          "package_name": "com.audsnap"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "444953707092-uongqpp2vlqaoasqp1rb1kbhtucjjeta.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5E1C-zrfvVXR0H7pjv4kdOwxWQaomniM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/colorPrimary"
+    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+    tools:context="com.audsnap.workingapp.RegisterUsername"
+    tools:showIn="@layout/activity_register_username">
+<TextView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="@string/give_username"
+    android:textSize="18dp"
+    android:gravity="center"
+    android:textColor="@color/colorAccent"
+    android:paddingTop="80dp"/>
+    <android.support.design.widget.TextInputLayout
+        android:theme="@style/MyEditTextTheme"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <EditText
+
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/registerusername"
+            android:padding="16dp"
+            android:textColor="@color/colorAccent"
+            android:singleLine="true"
+            android:hint="@string/enter_username"
+            />
+    </android.support.design.widget.TextInputLayout>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/b_username"
+        android:padding="16dp"
+        android:text="@string/register_me_with_this_username"
+        android:background="@drawable/signinbuttonstate"
+        android:textColor="@drawable/selector"
+        android:layout_gravity="center_horizontal" />
+</LinearLayout>

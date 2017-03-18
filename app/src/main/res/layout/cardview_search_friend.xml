@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:fancy="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginTop="10dp"
+    >
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        >
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/profile_image"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="5dp"
+            android:layout_marginLeft="10dp"
+            android:src="@drawable/default_avatar"
+        />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/usernameSearchFriend"
+            android:layout_toRightOf="@+id/profile_image"
+            android:layout_alignParentTop="true"
+            android:layout_marginLeft="10dp"
+            android:textSize="18sp"
+            android:text="Username"
+            android:textColor="#000"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="3dp"
+            />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/statusSearchFriend"
+            android:layout_toRightOf="@+id/profile_image"
+            android:layout_below="@+id/usernameSearchFriend"
+            android:layout_marginLeft="10dp"
+            android:layout_marginStart="10dp"
+
+
+            android:text="Status"
+            />
+
+        <mehdi.sakout.fancybuttons.FancyButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/addFriendButton"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_centerInParent="true"
+            android:paddingRight="15dp"
+            android:paddingEnd="15dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginEnd="5dp"
+            fancy:fb_iconResource="@drawable/ic_add_black_24dp"
+            fancy:fb_borderColor="@color/colorPrimary"
+            fancy:fb_borderWidth="1dp"
+            fancy:fb_defaultColor="#FFF"
+            fancy:fb_iconPosition="left"
+            fancy:fb_radius="30dp"
+            fancy:fb_text="Add"
+            fancy:fb_textColor="@color/colorPrimary"
+            android:visibility="gone"
+             />
+
+        <mehdi.sakout.fancybuttons.FancyButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/addedFriendButton"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
+            android:layout_centerInParent="true"
+            android:paddingRight="15dp"
+            android:paddingEnd="15dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginEnd="5dp"
+            fancy:fb_iconResource="@drawable/ic_check_24dp"
+            fancy:fb_borderColor="@color/colorPrimary"
+            fancy:fb_borderWidth="1dp"
+            fancy:fb_defaultColor="@color/colorPrimary"
+            fancy:fb_iconPosition="left"
+            fancy:fb_radius="30dp"
+            fancy:fb_text="Added"
+            fancy:fb_textColor="@color/colorAccent"
+            android:visibility="gone"
+            />
+
+        <mehdi.sakout.fancybuttons.FancyButton
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/addFriendProgressButton"
+            android:layout_alignParentRight="false"
+            android:layout_alignParentEnd="true"
+            android:layout_centerInParent="true"
+            fancy:fb_borderColor="@color/colorPrimary"
+            fancy:fb_borderWidth="1dp"
+            fancy:fb_defaultColor="@color/colorAccent"
+            fancy:fb_radius="30dp"
+            fancy:fb_text="Adding "
+            android:layout_marginRight="5dp"
+            android:layout_marginEnd="5dp"
+            fancy:fb_textColor="@color/colorPrimary"
+            android:orientation="horizontal"
+            android:weightSum="1"
+            android:visibility="gone"
+            >
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+            <ProgressBar
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                style="?android:attr/progressBarStyleSmall"
+                android:layout_weight="1"
+                android:indeterminate="true"
+                android:indeterminateTintMode="src_atop"
+                android:indeterminateTint="@color/colorPrimary" />
+            </RelativeLayout>
+            </mehdi.sakout.fancybuttons.FancyButton>
+
+    </RelativeLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#2000"
+        android:paddingTop="10dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginRight="5dp"
+        android:layout_marginEnd="5dp"
+        android:layout_marginLeft="5dp"
+        android:layout_marginStart="5dp"
+        />
+</LinearLayout>
