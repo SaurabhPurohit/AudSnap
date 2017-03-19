@@ -33,7 +33,8 @@ public class SearchFriendAdapter extends RecyclerView.Adapter<SearchFriendAdapte
     private View view;
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
-
+    private String uid;
+    private boolean flagLayout=false;
 
     public SearchFriendAdapter(Context context, List<SearchFriendViewItem> data) {
 
@@ -41,7 +42,19 @@ public class SearchFriendAdapter extends RecyclerView.Adapter<SearchFriendAdapte
         inflater = LayoutInflater.from(context);
         this.data = data;
         firebaseDatabase=FirebaseDatabase.getInstance();
-        databaseReference=firebaseDatabase.getReference("AudSnap/AddedFriends/"+ FirebaseAuth.getInstance().getCurrentUser().getUid());
+        uid=FirebaseAuth.getInstance().getCurrentUser().getUid();
+        databaseReference=firebaseDatabase.getReference("AudSnap/AddedFriends/"+uid);
+    }
+
+    public SearchFriendAdapter(Context context, List<SearchFriendViewItem> data,boolean flagLayout) {
+
+        this.context = context;
+        inflater = LayoutInflater.from(context);
+        this.data = data;
+        firebaseDatabase=FirebaseDatabase.getInstance();
+        uid=FirebaseAuth.getInstance().getCurrentUser().getUid();
+        databaseReference=firebaseDatabase.getReference("AudSnap/AddedFriends/"+uid);
+        this.flagLayout=flagLayout;
     }
 
     @Override
@@ -58,12 +71,18 @@ public class SearchFriendAdapter extends RecyclerView.Adapter<SearchFriendAdapte
 
         boolean flag = searchFriendViewItem.isAdded();
 
-        if(flag)
-        {
-            holder.mAddedButton.setVisibility(View.VISIBLE);
-        }
-        else {
-            holder.mAddButton.setVisibility(View.VISIBLE);
+        if(!flagLayout){
+
+            if(flag)
+            {
+                holder.mAddedButton.setVisibility(View.VISIBLE);
+            }
+            else {
+                holder.mAddButton.setVisibility(View.VISIBLE);
+            }
+        }else {
+            holder.mAddedButton.setVisibility(View.GONE);
+            holder.mAddButton.setVisibility(View.GONE);
         }
 
         holder.mUsername.setText(searchFriendViewItem.getUsername());
@@ -73,12 +92,17 @@ public class SearchFriendAdapter extends RecyclerView.Adapter<SearchFriendAdapte
             @Override
             public void onClick(View v) {
 
+                final DatabaseReference mAddedFriendReferenceFriend=firebaseDatabase.getReference("AudSnap/AddedFriends/"+
+                        searchFriendViewItem.getUserKey()+"/");
+
                 holder.mAddButton.setVisibility(View.GONE);
                 holder.mAddingButton.setVisibility(View.VISIBLE);
+
                 databaseReference.child(searchFriendViewItem.getUserKey()).setValue("true").
                         addOnSuccessListener((SearchFriendActivity) context, new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
+                                mAddedFriendReferenceFriend.child(uid).setValue("true");
                                 holder.mAddingButton.setVisibility(View.GONE);
                                 holder.mAddedButton.setVisibility(View.VISIBLE);
                             }
@@ -98,13 +122,18 @@ public class SearchFriendAdapter extends RecyclerView.Adapter<SearchFriendAdapte
             @Override
             public void onClick(View v) {
 
+                final DatabaseReference mAddedFriendReferenceFriend=firebaseDatabase.getReference("AudSnap/AddedFriends/"+
+                        searchFriendViewItem.getUserKey()+"/");
+
                 holder.mAddedButton.setVisibility(View.GONE);
                 holder.mAddingButton.setVisibility(View.VISIBLE);
                 holder.mAddingButton.setText("Removing ");
+
                 databaseReference.child(searchFriendViewItem.getUserKey()).removeValue().
                         addOnSuccessListener((SearchFriendActivity) context, new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
+                                mAddedFriendReferenceFriend.child(uid).removeValue();
                                 holder.mAddingButton.setVisibility(View.GONE);
                                 holder.mAddButton.setVisibility(View.VISIBLE);
                             }

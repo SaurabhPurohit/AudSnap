@@ -26,7 +26,7 @@ public class AddedMeAdapter extends RecyclerView.Adapter<AddedMeAdapter.ViewHold
     private Context context;
     private List<AddedMeViewItem> addedMeViewItems;
     private FirebaseDatabase firebaseDatabase;
-    private DatabaseReference mFriendReference,mAddedFriendReference,mFriendKeyReference;
+    private DatabaseReference mFriendReference,mAddedFriendReference,mAddedFriendReferenceFriend,mFriendKeyReference;
 
     public AddedMeAdapter(Context context,List<AddedMeViewItem> addedMeViewItems)
     {

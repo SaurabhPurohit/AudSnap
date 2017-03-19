@@ -56,7 +56,7 @@ public class FragementHandler extends AppCompatActivity {
         };
         firebaseAuth.addAuthStateListener(authStateListener);
 
-        Log.e("Usernamebefore",username);
+//        Log.e("Usernamebefore",username);
         if(firebaseUser!=null) {
             if (username.equals("")) {
                 InsertUsername insertUsername = new InsertUsername(this);
