@@ -98,11 +98,11 @@ public class SearchFriendAdapter extends RecyclerView.Adapter<SearchFriendAdapte
                 holder.mAddButton.setVisibility(View.GONE);
                 holder.mAddingButton.setVisibility(View.VISIBLE);
 
-                databaseReference.child(searchFriendViewItem.getUserKey()).setValue("true").
+                mAddedFriendReferenceFriend.child(uid).setValue("true").
                         addOnSuccessListener((SearchFriendActivity) context, new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
-                                mAddedFriendReferenceFriend.child(uid).setValue("true");
+                               // mAddedFriendReferenceFriend.child(uid).setValue("true");
                                 holder.mAddingButton.setVisibility(View.GONE);
                                 holder.mAddedButton.setVisibility(View.VISIBLE);
                             }
@@ -129,11 +129,11 @@ public class SearchFriendAdapter extends RecyclerView.Adapter<SearchFriendAdapte
                 holder.mAddingButton.setVisibility(View.VISIBLE);
                 holder.mAddingButton.setText("Removing ");
 
-                databaseReference.child(searchFriendViewItem.getUserKey()).removeValue().
+                mAddedFriendReferenceFriend.child(uid).removeValue().
                         addOnSuccessListener((SearchFriendActivity) context, new OnSuccessListener<Void>() {
                             @Override
                             public void onSuccess(Void aVoid) {
-                                mAddedFriendReferenceFriend.child(uid).removeValue();
+                                //mAddedFriendReferenceFriend.child(uid).removeValue();
                                 holder.mAddingButton.setVisibility(View.GONE);
                                 holder.mAddButton.setVisibility(View.VISIBLE);
                             }

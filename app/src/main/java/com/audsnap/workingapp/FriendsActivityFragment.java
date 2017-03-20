@@ -58,7 +58,7 @@ public class FriendsActivityFragment extends Fragment {
 
     private void setUpDatabseListener() {
 
-        friendsReference.addListenerForSingleValueEvent(new ValueEventListener() {
+        friendsReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for(DataSnapshot snapshot : dataSnapshot.getChildren())

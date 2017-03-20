@@ -57,11 +57,13 @@ public class AddedMeAdapter extends RecyclerView.Adapter<AddedMeAdapter.ViewHold
             public void onClick(View v) {
                 mAddedFriendReference=firebaseDatabase.getReference("AudSnap/AddedFriends/"+
                         FirebaseAuth.getInstance().getCurrentUser().getUid()+"/");
+                //mAddedFriendReferenceFriend=firebaseDatabase.getReference("AudSnap/AddedFriends/"+addedMeViewItem.getmKey()+"/");
                 mFriendKeyReference=firebaseDatabase.getReference("AudSnap/Friends/"+addedMeViewItem.getmKey()+"/");
 
                 mAddedFriendReference.child(addedMeViewItem.getmKey()).removeValue();
+                //mAddedFriendReferenceFriend.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).removeValue();
                 mFriendReference.child(addedMeViewItem.getmKey()).setValue("true");
-                mFriendKeyReference.child(addedMeViewItem.getmKey()).setValue("true");
+                mFriendKeyReference.child(FirebaseAuth.getInstance().getCurrentUser().getUid()).setValue("true");
                 addedMeViewItems.remove(position);
                 notifyItemRemoved(position);
                 notifyItemRangeChanged(position,getItemCount());
