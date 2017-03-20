@@ -39,7 +39,7 @@ public class SigninActivity extends AppCompatActivity {
     private Button mSignin;
     private TextView mSignup, forgotPassword;
     ProgressDialog progressDialog;
-    private FirebaseAuth firebaseAuth;
+    private FirebaseAuth mfirebaseAuth;
     private DatabaseReference usernameRef;
     public static String username;
     private FirebaseAuth.AuthStateListener mAuthStateListener;
@@ -49,10 +49,27 @@ public class SigninActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signin);
-        firebaseAuth = FirebaseAuth.getInstance();
+        mfirebaseAuth = FirebaseAuth.getInstance();
 
         initUi();
 
+        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull final FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    finish();
+                    startActivity(new Intent(getBaseContext(), FragementHandler.class)
+                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK));
+
+                } else {
+                    signIn();
+                }
+            }
+        };
+
+        mfirebaseAuth.addAuthStateListener(mAuthStateListener);
 
         forgotPassword.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -69,67 +86,7 @@ public class SigninActivity extends AppCompatActivity {
         });
 
 
-        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull final FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
-                    startActivity(new Intent(getBaseContext(), FragementHandler.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK));
-                    finish();
-                } else {
-                    mSignin.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View v) {
-                            showLoading();
-                            email = mEmail.getText().toString();
-                            password = mPassword.getText().toString();
-                            firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(SigninActivity.this,
-                                    new OnCompleteListener<AuthResult>() {
-                                        @Override
-                                        public void onComplete(@NonNull Task<AuthResult> task) {
 
-                                            if (task.isSuccessful()) {
-
-                                                if (firebaseAuth.getCurrentUser() != null) {
-                                                    FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-
-                                                    usernameRef = firebaseDatabase.getReference("AudSnap/" +
-                                                            FirebaseAuth.getInstance().getCurrentUser().getUid() + "/userinfo/USERNAME/");
-                                                    Log.e("FRAGMENTHANDLER", "" + usernameRef);
-
-                                                    usernameRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                                                        @Override
-                                                        public void onDataChange(DataSnapshot dataSnapshot) {
-                                                            username = (String) dataSnapshot.getValue();
-                                                            insertIntoDb(SigninActivity.this, username);
-                                                            //Log.e("FRAGMENTHANDLER",username);
-                                                        }
-
-                                                        @Override
-                                                        public void onCancelled(DatabaseError databaseError) {
-
-                                                        }
-                                                    });
-                                                }
-                                            }
-
-                                        }
-                                    }).addOnFailureListener(SigninActivity.this, new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    Toast.makeText(SigninActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
-                                    stopLoading();
-                                }
-                            });
-
-                        }
-                    });
-                }
-            }
-        };
-
-        firebaseAuth.addAuthStateListener(mAuthStateListener);
 
 
     }
@@ -143,6 +100,55 @@ public class SigninActivity extends AppCompatActivity {
         finish();
     }
 
+    private void signIn(){
+        mSignin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showLoading();
+                email = mEmail.getText().toString();
+                password = mPassword.getText().toString();
+                mfirebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(SigninActivity.this,
+                        new OnCompleteListener<AuthResult>() {
+                            @Override
+                            public void onComplete(@NonNull Task<AuthResult> task) {
+
+                                if (task.isSuccessful()) {
+
+//                                    if (mfirebaseAuth.getCurrentUser() != null) {
+                                        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+
+                                        usernameRef = firebaseDatabase.getReference("AudSnap/" +
+                                                FirebaseAuth.getInstance().getCurrentUser().getUid() + "/userinfo/USERNAME/");
+                                        Log.e("FRAGMENTHANDLER", "" + usernameRef);
+
+                                        usernameRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(DataSnapshot dataSnapshot) {
+                                                username = (String) dataSnapshot.getValue();
+                                                insertIntoDb(SigninActivity.this, username);
+                                                //Log.e("FRAGMENTHANDLER",username);
+                                            }
+
+                                            @Override
+                                            public void onCancelled(DatabaseError databaseError) {
+
+                                            }
+                                        });
+                                    }
+//                                }
+
+                            }
+                        }).addOnFailureListener(SigninActivity.this, new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(SigninActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                        stopLoading();
+                    }
+                });
+
+            }
+        });
+    }
     private void sendResetPasswordEmail() {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -164,7 +170,7 @@ public class SigninActivity extends AppCompatActivity {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String useremail = input.getText().toString();
-                firebaseAuth.sendPasswordResetEmail(useremail).addOnCompleteListener(SigninActivity.this, new OnCompleteListener<Void>() {
+                mfirebaseAuth.sendPasswordResetEmail(useremail).addOnCompleteListener(SigninActivity.this, new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
@@ -211,7 +217,7 @@ public class SigninActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        firebaseAuth.addAuthStateListener(mAuthStateListener);
+        mfirebaseAuth.addAuthStateListener(mAuthStateListener);
     }
 
     void showLoading() {
