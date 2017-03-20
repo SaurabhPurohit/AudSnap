@@ -61,6 +61,7 @@ public class FriendsActivityFragment extends Fragment {
         friendsReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                searchFriendViewItems.clear();
                 for(DataSnapshot snapshot : dataSnapshot.getChildren())
                 {
                     friendsInfoReference=firebaseDatabase.getReference("AudSnap/Profiles/"+
