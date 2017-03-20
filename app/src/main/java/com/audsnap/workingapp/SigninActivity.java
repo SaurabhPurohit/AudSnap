@@ -23,6 +23,7 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -33,21 +34,22 @@ import com.google.firebase.database.ValueEventListener;
 public class SigninActivity extends AppCompatActivity {
 
 
-    private EditText mEmail,mPassword;
-    private String email,password;
+    private EditText mEmail, mPassword;
+    private String email, password;
     private Button mSignin;
-    private TextView mSignup,forgotPassword;
+    private TextView mSignup, forgotPassword;
     ProgressDialog progressDialog;
     private FirebaseAuth firebaseAuth;
     private DatabaseReference usernameRef;
     public static String username;
+    private FirebaseAuth.AuthStateListener mAuthStateListener;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_signin);
-        firebaseAuth=FirebaseAuth.getInstance();
+        firebaseAuth = FirebaseAuth.getInstance();
 
         initUi();
 
@@ -62,68 +64,81 @@ public class SigninActivity extends AppCompatActivity {
         mSignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(getBaseContext(),SignupActivity.class));
+                startActivity(new Intent(getBaseContext(), SignupActivity.class));
             }
         });
 
-        mSignin.setOnClickListener(new View.OnClickListener() {
+
+        mAuthStateListener = new FirebaseAuth.AuthStateListener() {
             @Override
-            public void onClick(View v) {
-                showLoading();
-                email=mEmail.getText().toString();
-                password=mPassword.getText().toString();
+            public void onAuthStateChanged(@NonNull final FirebaseAuth firebaseAuth) {
+                FirebaseUser user = firebaseAuth.getCurrentUser();
+                if (user != null) {
+                    startActivity(new Intent(getBaseContext(), FragementHandler.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+                            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                    finish();
+                } else {
+                    mSignin.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            showLoading();
+                            email = mEmail.getText().toString();
+                            password = mPassword.getText().toString();
+                            firebaseAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(SigninActivity.this,
+                                    new OnCompleteListener<AuthResult>() {
+                                        @Override
+                                        public void onComplete(@NonNull Task<AuthResult> task) {
 
-                firebaseAuth.signInWithEmailAndPassword(email,password).addOnCompleteListener(SigninActivity.this,
-                        new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
+                                            if (task.isSuccessful()) {
 
-                        if(task.isSuccessful()){
+                                                if (firebaseAuth.getCurrentUser() != null) {
+                                                    FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
 
-                            if(firebaseAuth.getCurrentUser()!=null) {
-                                FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+                                                    usernameRef = firebaseDatabase.getReference("AudSnap/" +
+                                                            FirebaseAuth.getInstance().getCurrentUser().getUid() + "/userinfo/USERNAME/");
+                                                    Log.e("FRAGMENTHANDLER", "" + usernameRef);
 
-                                usernameRef = firebaseDatabase.getReference("AudSnap/" +
-                                        FirebaseAuth.getInstance().getCurrentUser().getUid() + "/userinfo/USERNAME/");
-                                Log.e("FRAGMENTHANDLER", "" + usernameRef);
+                                                    usernameRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                                                        @Override
+                                                        public void onDataChange(DataSnapshot dataSnapshot) {
+                                                            username = (String) dataSnapshot.getValue();
+                                                            insertIntoDb(SigninActivity.this, username);
+                                                            //Log.e("FRAGMENTHANDLER",username);
+                                                        }
 
-                                usernameRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                                    @Override
-                                    public void onDataChange(DataSnapshot dataSnapshot) {
-                                        username=(String) dataSnapshot.getValue();
-                                        insertIntoDb(SigninActivity.this,username);
-                                        //Log.e("FRAGMENTHANDLER",username);
-                                    }
+                                                        @Override
+                                                        public void onCancelled(DatabaseError databaseError) {
 
-                                    @Override
-                                    public void onCancelled(DatabaseError databaseError) {
+                                                        }
+                                                    });
+                                                }
+                                            }
 
-                                    }
-                                });
-                            }
+                                        }
+                                    }).addOnFailureListener(SigninActivity.this, new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    Toast.makeText(SigninActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
+                                    stopLoading();
+                                }
+                            });
+
                         }
-
-                    }
-                }).addOnFailureListener(SigninActivity.this, new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(SigninActivity.this,e.getMessage(),Toast.LENGTH_LONG).show();
-                        stopLoading();
-                    }
-                });
-
+                    });
+                }
             }
-        });
+        };
+
+        firebaseAuth.addAuthStateListener(mAuthStateListener);
 
 
     }
 
-    private void insertIntoDb(Context ctx,String username)
-    {
+    private void insertIntoDb(Context ctx, String username) {
         InsertUsername insertUsername = new InsertUsername(ctx);
-        insertUsername.insertUserName(insertUsername,username);
+        insertUsername.insertUserName(insertUsername, username);
         stopLoading();
-        startActivity(new Intent(getBaseContext(),FragementHandler.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        startActivity(new Intent(getBaseContext(), FragementHandler.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK));
         finish();
     }
@@ -148,18 +163,18 @@ public class SigninActivity extends AppCompatActivity {
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
-                String useremail=input.getText().toString();
+                String useremail = input.getText().toString();
                 firebaseAuth.sendPasswordResetEmail(useremail).addOnCompleteListener(SigninActivity.this, new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        if(task.isSuccessful()){
-                            Toast.makeText(SigninActivity.this,R.string.password_reset_msg,Toast.LENGTH_LONG).show();
+                        if (task.isSuccessful()) {
+                            Toast.makeText(SigninActivity.this, R.string.password_reset_msg, Toast.LENGTH_LONG).show();
                         }
                     }
                 }).addOnFailureListener(SigninActivity.this, new OnFailureListener() {
                     @Override
                     public void onFailure(@NonNull Exception e) {
-                        Toast.makeText(SigninActivity.this,e.getMessage(),Toast.LENGTH_LONG).show();
+                        Toast.makeText(SigninActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
                     }
                 });
 
@@ -175,13 +190,12 @@ public class SigninActivity extends AppCompatActivity {
         builder.show();
     }
 
-    private void initUi()
-    {
-        mEmail=(EditText) findViewById(R.id.signinemail);
-        mPassword=(EditText) findViewById(R.id.signinpassword);
-        mSignin=(Button) findViewById(R.id.signin);
+    private void initUi() {
+        mEmail = (EditText) findViewById(R.id.signinemail);
+        mPassword = (EditText) findViewById(R.id.signinpassword);
+        mSignin = (Button) findViewById(R.id.signin);
         mSignup = (TextView) findViewById(R.id.signuptext);
-        forgotPassword=(TextView) findViewById(R.id.forgotpassword);
+        forgotPassword = (TextView) findViewById(R.id.forgotpassword);
     }
 
     @Override
@@ -194,16 +208,21 @@ public class SigninActivity extends AppCompatActivity {
         super.onStop();
     }
 
-    void showLoading()
-    {
-        progressDialog=new ProgressDialog(SigninActivity.this);
+    @Override
+    protected void onResume() {
+        super.onResume();
+        firebaseAuth.addAuthStateListener(mAuthStateListener);
+    }
+
+    void showLoading() {
+        progressDialog = new ProgressDialog(SigninActivity.this);
         progressDialog.setMessage("Loading...");
         progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progressDialog.setIndeterminate(true);
         progressDialog.show();
     }
-    void stopLoading()
-    {
+
+    void stopLoading() {
         progressDialog.dismiss();
     }
 }

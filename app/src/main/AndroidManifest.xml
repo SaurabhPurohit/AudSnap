@@ -14,11 +14,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
         <activity android:name=".workingapp.FragementHandler">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
+            <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+            <category android:name="android.intent.category.DEFAULT" />
         </activity>
         <activity
             android:name=".workingapp.SignupActivity"
@@ -26,7 +24,13 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".workingapp.SigninActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.NoActionBar" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
         <activity
             android:name=".workingapp.RegisterUsername"
             android:label="@string/title_activity_register_username"
