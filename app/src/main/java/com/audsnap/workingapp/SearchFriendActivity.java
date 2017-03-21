@@ -51,6 +51,11 @@ public class SearchFriendActivity extends AppCompatActivity {
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
 
+        if (getBaseContext() != null) {
+            searchFriendAdapter = new SearchFriendAdapter(SearchFriendActivity.this, searchFriendViewItems);
+            recyclerView.setAdapter(searchFriendAdapter);
+        }
+
         firebaseDatabase = FirebaseDatabase.getInstance();
         databaseReference = firebaseDatabase.getReference("/AudSnap/UserNames");
         profilePicReference = firebaseDatabase.getReference("/AudSnap/Profiles/");
@@ -107,6 +112,8 @@ public class SearchFriendActivity extends AppCompatActivity {
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
                 if (!s.equals("")) {
+                    if(updatedValueEventListener!=null)
+                        databaseReference.removeEventListener(updatedValueEventListener);
                     updatedValueEventListener = valueEventListener(s);
                     databaseReference.addValueEventListener(updatedValueEventListener);
                 }
@@ -126,24 +133,30 @@ public class SearchFriendActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 searchFriendViewItems.clear();
-                for (DataSnapshot searchDataSnapShot : dataSnapshot.getChildren()) {
+                for (final DataSnapshot searchDataSnapShot : dataSnapshot.getChildren()) {
                     final SearchFriendViewItem searchFriendViewItem = new SearchFriendViewItem();
-                    String username = searchDataSnapShot.getValue().toString();
+                    final String username = searchDataSnapShot.getValue().toString();
+
                     if (username.contains(usernameSubString)) {
+
                         if (addedFreinds.contains(searchDataSnapShot.getKey())) {
                             searchFriendViewItem.setAdded(true);
                         } else {
                             searchFriendViewItem.setAdded(false);
                         }
-                        searchFriendViewItem.setUsername(username);
-                        searchFriendViewItem.setStatus(" ");
-                        searchFriendViewItem.setUserKey(searchDataSnapShot.getKey());
+
                         profilePicReference.child(searchDataSnapShot.getKey() + "/userinfo/PICTURE/").
                                 addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
-                                        searchFriendViewItem.setPhotoUrl(dataSnapshot.getValue().toString());
-                                        searchFriendViewItems.add(searchFriendViewItem);
+                                        if(!username.equals(FragementHandler.username)) {
+                                            searchFriendViewItem.setUsername(username);
+                                            searchFriendViewItem.setStatus(" ");
+                                            searchFriendViewItem.setUserKey(searchDataSnapShot.getKey());
+                                            searchFriendViewItem.setPhotoUrl(dataSnapshot.getValue().toString());
+                                            searchFriendViewItems.add(searchFriendViewItem);
+                                            recyclerView.getAdapter().notifyDataSetChanged();
+                                        }
                                     }
 
                                     @Override
@@ -156,10 +169,6 @@ public class SearchFriendActivity extends AppCompatActivity {
 
                 }
 
-                if (getBaseContext() != null) {
-                    searchFriendAdapter = new SearchFriendAdapter(SearchFriendActivity.this, searchFriendViewItems);
-                    recyclerView.setAdapter(searchFriendAdapter);
-                }
             }
 
             @Override
