@@ -21,8 +21,12 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.audsnap.R;
+import com.audsnap.adapter.SearchFriendAdapter;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
@@ -44,6 +48,9 @@ public class PreviewImage extends AppCompatActivity implements View.OnClickListe
     private ImageView imageView;
     private TextureView videoView;
     private StorageReference mStorageRef;
+    private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+    private DatabaseReference mSenderDb = firebaseDatabase.getReference("/AudSnap/chat/"+FirebaseAuth.getInstance().getCurrentUser().getUid()+"/");
+    private DatabaseReference mReceiverDb = firebaseDatabase.getReference("/AudSnap/chat/"+ SearchFriendAdapter.receiverId+"/");
     Uri uri;
     File audioFile;
 
@@ -79,42 +86,6 @@ public class PreviewImage extends AppCompatActivity implements View.OnClickListe
             myAudioRecorder = new MediaRecorder();
             viewImage = (ImageButton) findViewById(R.id.button_view_image);
             viewImage.setOnClickListener(this);
-
-
-            /*imageView.setOnLongClickListener(new View.OnLongClickListener() {
-                @Override
-                public boolean onLongClick(View v) {
-
-
-                   // startVideo();
-                    imageView.setVisibility(View.GONE);
-                    //videoView.setVisibility(View.VISIBLE);
-                    if(index==0)
-                    {
-                        videoView.setRotation((float)270);
-                    }
-                    else{
-                        videoView.setRotation((float)90);
-                    }
-
-                    if(s!=null)
-                    {
-                        setUpMediaPlayer(s);
-                    }
-                    *//*videoView.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
-                            @Override
-                            public void onCompletion(MediaPlayer mp) {
-                                videoView.setVisibility(View.GONE);
-                                imageView.setVisibility(View.VISIBLE);
-                                setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-                            }
-                    });*//*
-
-                    //videoView.start();
-
-                    return true;
-                }
-            });*/
         }
 
     }
@@ -195,9 +166,6 @@ public class PreviewImage extends AppCompatActivity implements View.OnClickListe
                 playSound();
 
                 break;
-
-
-
         }
     }
 
@@ -208,17 +176,15 @@ public class PreviewImage extends AppCompatActivity implements View.OnClickListe
             progressDialog.setTitle("Uploading");
             progressDialog.show();
 
-            StorageReference ImageRef = mStorageRef.child("images")
+            StorageReference ImageRef = mStorageRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()+"/images")
                     .child(uri.getLastPathSegment());
 
             Uri audioUri = Uri.fromFile(audioFile);
 
-            StorageReference audioRef = mStorageRef.child("audio")
+            StorageReference audioRef = mStorageRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()+"audio")
                     .child(uri.getLastPathSegment());
 
             Log.d("AUDIO",audioUri.toString());
-
-
 
 //            Log.d("uploadURI",filePath.toString());
             ImageRef.putFile(uri)
@@ -228,6 +194,10 @@ public class PreviewImage extends AppCompatActivity implements View.OnClickListe
                             //if the upload is successfull
                             //hiding the progress dialog
                             progressDialog.dismiss();
+                            @SuppressWarnings("VisibleForTests")
+                            Uri uri = taskSnapshot.getDownloadUrl();
+                            mSenderDb.child(time+"/image/").setValue(uri);
+                            mReceiverDb.child(time+"/image/").setValue(uri);
 //                            imageView.setVisibility(View.INVISIBLE);
                             //and displaying a success toast
                             Toast.makeText(getApplicationContext(), "File Uploaded ", Toast.LENGTH_LONG).show();
@@ -264,6 +234,21 @@ public class PreviewImage extends AppCompatActivity implements View.OnClickListe
                             //hiding the progress dialog
                             //progressDialog.dismiss();
 //                            imageView.setVisibility(View.INVISIBLE);
+                            @SuppressWarnings("VisibleForTests")
+                            Uri uri = taskSnapshot.getDownloadUrl();
+                            mSenderDb.child(time+"/audio/").setValue(uri).addOnFailureListener(PreviewImage.this, new OnFailureListener() {
+                                @Override
+                                public void onFailure(@NonNull Exception e) {
+                                    e.printStackTrace();
+                                }
+                            });
+                            mSenderDb.child(time+"/receiver/").setValue(SearchFriendAdapter.receiverId);
+                            mSenderDb.child(time+"/sent/").setValue(true);
+
+                            mReceiverDb.child(time+"/audio/").setValue(uri);
+                            mReceiverDb.child(time+"/receiver/").setValue(FirebaseAuth.getInstance().getCurrentUser().getUid());
+                            mReceiverDb.child(time+"/sent/").setValue(false);
+
                             //and displaying a success toast
                             Toast.makeText(getApplicationContext(), "File Uploaded ", Toast.LENGTH_LONG).show();
                         }

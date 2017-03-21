@@ -1,15 +1,18 @@
 package com.audsnap.adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.audsnap.R;
+import com.audsnap.camera.DemoCamera;
 import com.audsnap.workingapp.SearchFriendActivity;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -37,6 +40,7 @@ public class SearchFriendAdapter extends RecyclerView.Adapter<SearchFriendAdapte
     private DatabaseReference databaseReference;
     private String uid;
     private boolean flagLayout=false;
+    public static String receiverId="";
 
     public SearchFriendAdapter(Context context, List<SearchFriendViewItem> data) {
 
@@ -78,6 +82,16 @@ public class SearchFriendAdapter extends RecyclerView.Adapter<SearchFriendAdapte
         }
         else {
             Picasso.with(context).load(searchFriendViewItem.getPhotoUrl()).into(holder.mProfilePicture);
+        }
+        if(flagLayout)
+        {
+            holder.mMainLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    receiverId=searchFriendViewItem.getUserKey();
+                    context.startActivity(new Intent(context, DemoCamera.class));
+                }
+            });
         }
         if(!flagLayout){
 
@@ -166,6 +180,7 @@ public class SearchFriendAdapter extends RecyclerView.Adapter<SearchFriendAdapte
         TextView mStatus,mUsername;
         FancyButton mAddButton,mAddedButton,mAddingButton;
         CircleImageView mProfilePicture;
+        LinearLayout mMainLayout;
 
         public MyViewHolder(final View itemView) {
             super(itemView);
@@ -175,6 +190,7 @@ public class SearchFriendAdapter extends RecyclerView.Adapter<SearchFriendAdapte
             mAddedButton=(FancyButton) itemView.findViewById(R.id.addedFriendButton);
             mAddingButton=(FancyButton) itemView.findViewById(R.id.addFriendProgressButton);
             mProfilePicture=(CircleImageView) itemView.findViewById(R.id.profile_image);
+            mMainLayout=(LinearLayout) itemView.findViewById(R.id.searchMainLayout);
         }
     }
 }
