@@ -16,10 +16,12 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.squareup.picasso.Picasso;
 
 import java.util.Collections;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
 import mehdi.sakout.fancybuttons.FancyButton;
 
 /**
@@ -71,6 +73,7 @@ public class SearchFriendAdapter extends RecyclerView.Adapter<SearchFriendAdapte
 
         boolean flag = searchFriendViewItem.isAdded();
 
+        Picasso.with(context).load(searchFriendViewItem.getPhotoUrl()).into(holder.mProfilePicture);
         if(!flagLayout){
 
             if(flag)
@@ -157,6 +160,7 @@ public class SearchFriendAdapter extends RecyclerView.Adapter<SearchFriendAdapte
     class MyViewHolder extends RecyclerView.ViewHolder {
         TextView mStatus,mUsername;
         FancyButton mAddButton,mAddedButton,mAddingButton;
+        CircleImageView mProfilePicture;
 
         public MyViewHolder(final View itemView) {
             super(itemView);
@@ -165,6 +169,7 @@ public class SearchFriendAdapter extends RecyclerView.Adapter<SearchFriendAdapte
             mAddButton=(FancyButton) itemView.findViewById(R.id.addFriendButton);
             mAddedButton=(FancyButton) itemView.findViewById(R.id.addedFriendButton);
             mAddingButton=(FancyButton) itemView.findViewById(R.id.addFriendProgressButton);
+            mProfilePicture=(CircleImageView) itemView.findViewById(R.id.profile_image);
         }
     }
 }

@@ -48,7 +48,7 @@ public class FragementHandler extends AppCompatActivity {
 
                 if(firebaseUser==null){
                     startActivity(new Intent(getBaseContext(),SigninActivity.class).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                            .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                                .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK));
                     finish();
                 }
 

@@ -88,7 +88,10 @@ public class SignupActivity extends AppCompatActivity {
                                 Toast.makeText(SignupActivity.this, e.getMessage(), Toast.LENGTH_LONG).show();
                             }
                         });
-                    }catch (Exception e){ e.printStackTrace();}
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        Toast.makeText(SignupActivity.this,"Error Registering User",Toast.LENGTH_SHORT).show();
+                    }
 
                     finally {
                         stopLoading();

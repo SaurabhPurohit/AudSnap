@@ -51,7 +51,7 @@ public class ProfileActivity extends AppCompatActivity {
     private final int PICK_IMAGE_CODE=100;
     private StorageReference storageRef,imageRef;
     private FirebaseDatabase mFirebaseDatabase;
-    private DatabaseReference mUsernameReference;
+    private DatabaseReference mUsernameReference,mProfilePicReference;
     private File profileImg;
     private String uid,pathOfProfilePic;
     private Bitmap croppedImage,profileImage;
@@ -74,7 +74,7 @@ public class ProfileActivity extends AppCompatActivity {
 
         mFirebaseDatabase=FirebaseDatabase.getInstance();
         mUsernameReference=mFirebaseDatabase.getReference("/AudSnap/UserNames/"+uid);
-
+        mProfilePicReference=mFirebaseDatabase.getReference("AudSnap/Profiles/"+uid+"/userinfo/");
 
         FirebaseStorage storage = FirebaseStorage.getInstance();
         storageRef = storage.getReferenceFromUrl("gs://project-527458073545831192.appspot.com/");
@@ -161,7 +161,6 @@ public class ProfileActivity extends AppCompatActivity {
                 imagePath = data.getData();
                 Log.e("PICTUREPATH", getImagePathFromUri(imagePath));
                 croppedImage(getImagePathFromUri(imagePath));
-
             }
 
         }
@@ -319,32 +318,18 @@ public class ProfileActivity extends AppCompatActivity {
                 new OnSuccessListener<UploadTask.TaskSnapshot>() {
                     @Override
                     public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                       /* profileImg = new File(Environment.getExternalStorageDirectory() + "/AudSnap/ProfilePicture/");
-                        if(!profileImg.exists())
-                        {
-                            boolean b = profileImg.mkdir();
-                        }
-                        try {
-                            File saveProfileImg = new File(profileImg, uid + ".jpg");
-                            FileOutputStream fos = new FileOutputStream(saveProfileImg);
-                            Bitmap bit = imageView.getDrawingCache();
-                            bit.compress(Bitmap.CompressFormat.JPEG, 50, fos);
-                            fos.flush();
-                            fos.close();
-                            getImagePathAndSetImageView();
-                            stopLoading();
-                            Toast.makeText(ProfileActivity.this, R.string.msg_profile_picture_changed, Toast.LENGTH_LONG).show();
-                        }catch (Exception e)
-                        {
-                            File saveProfileImg = new File(profileImg, uid + ".jpg");
-                            Uri uri=Uri.fromFile(saveProfileImg);
-                            Toast.makeText(getBaseContext(),"Failed to change profile picture",Toast.LENGTH_SHORT).show();
-                            imageView.setImageURI(uri);
-                        }*/
+
                         stopLoading();
                         imageRef.getDownloadUrl().addOnSuccessListener(ProfileActivity.this, new OnSuccessListener<Uri>() {
                             @Override
                             public void onSuccess(Uri uri) {
+                                mProfilePicReference.child("PICTURE").setValue(uri.toString())
+                                        .addOnFailureListener(ProfileActivity.this, new OnFailureListener() {
+                                    @Override
+                                    public void onFailure(@NonNull Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                });
                                 Picasso.with(ProfileActivity.this).load(uri).into(imageView);
                                 Toast.makeText(ProfileActivity.this, R.string.msg_profile_picture_changed, Toast.LENGTH_LONG).show();
                             }

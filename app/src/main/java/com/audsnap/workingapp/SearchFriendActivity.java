@@ -30,11 +30,11 @@ public class SearchFriendActivity extends AppCompatActivity {
     private EditText mSearchFriend;
     private RecyclerView recyclerView;
     private FirebaseDatabase firebaseDatabase;
-    private DatabaseReference databaseReference, addedFriendReference;
-    private List<SearchFriendViewItem> searchFriendViewItems=new ArrayList<>();
-    private List<SearchFriendViewItem> searchEditedFriendViewItems=new ArrayList<>();
+    private DatabaseReference databaseReference, addedFriendReference, profilePicReference;
+    private List<SearchFriendViewItem> searchFriendViewItems = new ArrayList<>();
+    private List<SearchFriendViewItem> searchEditedFriendViewItems = new ArrayList<>();
     private SearchFriendAdapter searchFriendAdapter;
-    private ValueEventListener valueEventListener,updatedValueEventListener;
+    private ValueEventListener valueEventListener, updatedValueEventListener;
 
     private ArrayList<String> addedFreinds = new ArrayList<>();
 
@@ -47,20 +47,20 @@ public class SearchFriendActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         mSearchFriend = (EditText) findViewById(R.id.search_friend);
-        recyclerView=(RecyclerView) findViewById(R.id.searchFriendRecyclerView);
+        recyclerView = (RecyclerView) findViewById(R.id.searchFriendRecyclerView);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(linearLayoutManager);
 
-        firebaseDatabase=FirebaseDatabase.getInstance();
-        databaseReference=firebaseDatabase.getReference("/AudSnap/UserNames");
-        addedFriendReference=firebaseDatabase.getReference("AudSnap/Friends/"+ FirebaseAuth.getInstance().getCurrentUser().getUid());
+        firebaseDatabase = FirebaseDatabase.getInstance();
+        databaseReference = firebaseDatabase.getReference("/AudSnap/UserNames");
+        profilePicReference = firebaseDatabase.getReference("/AudSnap/Profiles/");
+        addedFriendReference = firebaseDatabase.getReference("AudSnap/Friends/" + FirebaseAuth.getInstance().getCurrentUser().getUid());
 
         addedFriendReference.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                for(DataSnapshot snapshot : dataSnapshot.getChildren())
-                {
+                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     addedFreinds.add(snapshot.getKey());
                 }
             }
@@ -71,25 +71,22 @@ public class SearchFriendActivity extends AppCompatActivity {
             }
         });
 
-        valueEventListener=new ValueEventListener() {
+        /*valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 searchFriendViewItems.clear();
-                for(DataSnapshot searchDataSnapShot : dataSnapshot.getChildren())
-                {
+                for (DataSnapshot searchDataSnapShot : dataSnapshot.getChildren()) {
                     SearchFriendViewItem searchFriendViewItem = new SearchFriendViewItem();
 
                     searchFriendViewItem.setUsername(searchDataSnapShot.getValue().toString());
                     searchFriendViewItem.setStatus(" ");
-
                     searchFriendViewItems.add(searchFriendViewItem);
 
                 }
 
-                if(getBaseContext()!=null)
-                {
-                    searchFriendAdapter=new SearchFriendAdapter(SearchFriendActivity.this,searchFriendViewItems);
+                if (getBaseContext() != null) {
+                    searchFriendAdapter = new SearchFriendAdapter(SearchFriendActivity.this, searchFriendViewItems);
                     recyclerView.setAdapter(searchFriendAdapter);
                 }
             }
@@ -98,7 +95,7 @@ public class SearchFriendActivity extends AppCompatActivity {
             public void onCancelled(DatabaseError databaseError) {
 
             }
-        };
+        };*/
 
         mSearchFriend.addTextChangedListener(new TextWatcher() {
             @Override
@@ -109,7 +106,7 @@ public class SearchFriendActivity extends AppCompatActivity {
             @Override
             public void onTextChanged(CharSequence s, int start, int before, int count) {
 
-                if(!s.equals("")) {
+                if (!s.equals("")) {
                     updatedValueEventListener = valueEventListener(s);
                     databaseReference.addValueEventListener(updatedValueEventListener);
                 }
@@ -122,38 +119,45 @@ public class SearchFriendActivity extends AppCompatActivity {
         });
     }
 
-    private ValueEventListener valueEventListener(final CharSequence usernameSubString)
-    {
+    private ValueEventListener valueEventListener(final CharSequence usernameSubString) {
 
-        valueEventListener=new ValueEventListener() {
+        valueEventListener = new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 searchFriendViewItems.clear();
-                for(DataSnapshot searchDataSnapShot : dataSnapshot.getChildren())
-                {
-                    SearchFriendViewItem searchFriendViewItem = new SearchFriendViewItem();
+                for (DataSnapshot searchDataSnapShot : dataSnapshot.getChildren()) {
+                    final SearchFriendViewItem searchFriendViewItem = new SearchFriendViewItem();
                     String username = searchDataSnapShot.getValue().toString();
-                    if(username.contains(usernameSubString))
-                    {
-                        if(addedFreinds.contains(searchDataSnapShot.getKey()))
-                        {
+                    if (username.contains(usernameSubString)) {
+                        if (addedFreinds.contains(searchDataSnapShot.getKey())) {
                             searchFriendViewItem.setAdded(true);
-                        }
-                        else{
+                        } else {
                             searchFriendViewItem.setAdded(false);
                         }
                         searchFriendViewItem.setUsername(username);
                         searchFriendViewItem.setStatus(" ");
                         searchFriendViewItem.setUserKey(searchDataSnapShot.getKey());
-                        searchFriendViewItems.add(searchFriendViewItem);
+                        profilePicReference.child(searchDataSnapShot.getKey() + "/userinfo/PICTURE/").
+                                addListenerForSingleValueEvent(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(DataSnapshot dataSnapshot) {
+                                        searchFriendViewItem.setPhotoUrl(dataSnapshot.getValue().toString());
+                                        searchFriendViewItems.add(searchFriendViewItem);
+                                    }
+
+                                    @Override
+                                    public void onCancelled(DatabaseError databaseError) {
+
+                                    }
+                                });
+
                     }
 
                 }
 
-                if(getBaseContext()!=null)
-                {
-                    searchFriendAdapter=new SearchFriendAdapter(SearchFriendActivity.this,searchFriendViewItems);
+                if (getBaseContext() != null) {
+                    searchFriendAdapter = new SearchFriendAdapter(SearchFriendActivity.this, searchFriendViewItems);
                     recyclerView.setAdapter(searchFriendAdapter);
                 }
             }
@@ -161,7 +165,7 @@ public class SearchFriendActivity extends AppCompatActivity {
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
-                Toast.makeText(getBaseContext(),databaseError.getMessage(),Toast.LENGTH_SHORT).show();
+                Toast.makeText(getBaseContext(), databaseError.getMessage(), Toast.LENGTH_SHORT).show();
             }
         };
         return valueEventListener;

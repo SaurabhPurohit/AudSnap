@@ -13,6 +13,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,6 +43,8 @@ public class FriendsActivityFragment extends Fragment {
             .getCurrentUser().getUid());
     private DatabaseReference friendsInfoReference;
     private List<SearchFriendViewItem> searchFriendViewItems = new ArrayList<>();
+    private ProgressBar progressBar;
+    private TextView mNoFriendsLabel;
 
     public FriendsActivityFragment() {
 
@@ -51,6 +54,9 @@ public class FriendsActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
         View v =inflater.inflate(R.layout.fragment_friends, container, false);
+        progressBar=(ProgressBar) v.findViewById(R.id.friendsProgressView);
+        mNoFriendsLabel=(TextView) v.findViewById(R.id.noFriendsTag);
+
         setUpRecyclerView(v);
         setUpDatabseListener();
         return v;
@@ -62,28 +68,43 @@ public class FriendsActivityFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 searchFriendViewItems.clear();
-                for(DataSnapshot snapshot : dataSnapshot.getChildren())
+                if(dataSnapshot.getChildrenCount()==0)
                 {
-                    friendsInfoReference=firebaseDatabase.getReference("AudSnap/Profiles/"+
-                            snapshot.getKey()+"/userinfo/USERNAME/");
+                    mNoFriendsLabel.setVisibility(View.VISIBLE);
+                    progressBar.setVisibility(View.GONE);
+                }
+                else {
+                    mNoFriendsLabel.setVisibility(View.GONE);
 
-                    friendsInfoReference.addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
+                    for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
-                            SearchFriendViewItem searchFriendViewItem = new SearchFriendViewItem();
-                            searchFriendViewItem.setUsername(dataSnapshot.getValue().toString());
-                            searchFriendViewItem.setStatus(" ");
+                        final String key = snapshot.getKey();
+                        friendsInfoReference = firebaseDatabase.getReference("AudSnap/Profiles/" +
+                                key + "/userinfo/USERNAME/");
 
-                            searchFriendViewItems.add(searchFriendViewItem);
-                            recyclerView.getAdapter().notifyDataSetChanged();
-                        }
+                        friendsInfoReference.addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(DataSnapshot dataSnapshot) {
 
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
+                                SearchFriendViewItem searchFriendViewItem = new SearchFriendViewItem();
+                                searchFriendViewItem.setUsername(dataSnapshot.getValue().toString());
+                                searchFriendViewItem.setStatus(" ");
+                                searchFriendViewItem.setUserKey(key);
 
-                        }
-                    });
+
+                                searchFriendViewItems.add(searchFriendViewItem);
+                                recyclerView.getAdapter().notifyDataSetChanged();
+                                progressBar.setVisibility(View.GONE);
+                            }
+
+                            @Override
+                            public void onCancelled(DatabaseError databaseError) {
+                                Toast.makeText(getContext(),"Error Retriving Your Friends",Toast.LENGTH_SHORT).show();
+                                progressBar.setVisibility(View.GONE);
+                            }
+                        });
+
+                    }
 
                 }
 
@@ -91,7 +112,7 @@ public class FriendsActivityFragment extends Fragment {
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
+                progressBar.setVisibility(View.GONE);
             }
         });
     }
