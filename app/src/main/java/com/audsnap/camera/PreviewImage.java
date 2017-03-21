@@ -22,8 +22,10 @@ import android.widget.Toast;
 
 import com.audsnap.R;
 import com.audsnap.adapter.SearchFriendAdapter;
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -49,8 +51,8 @@ public class PreviewImage extends AppCompatActivity implements View.OnClickListe
     private TextureView videoView;
     private StorageReference mStorageRef;
     private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-    private DatabaseReference mSenderDb = firebaseDatabase.getReference("/AudSnap/chat/"+FirebaseAuth.getInstance().getCurrentUser().getUid()+"/");
-    private DatabaseReference mReceiverDb = firebaseDatabase.getReference("/AudSnap/chat/"+ SearchFriendAdapter.receiverId+"/");
+    private DatabaseReference mSenderDb = firebaseDatabase.getReference("/AudSnap/chat/"+FirebaseAuth.getInstance().getCurrentUser().getUid());
+    private DatabaseReference mReceiverDb = firebaseDatabase.getReference("/AudSnap/chat/"+ SearchFriendAdapter.receiverId);
     Uri uri;
     File audioFile;
 
@@ -181,8 +183,8 @@ public class PreviewImage extends AppCompatActivity implements View.OnClickListe
 
             Uri audioUri = Uri.fromFile(audioFile);
 
-            StorageReference audioRef = mStorageRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()+"audio")
-                    .child(uri.getLastPathSegment());
+            StorageReference audioRef = mStorageRef.child(FirebaseAuth.getInstance().getCurrentUser().getUid()+"/audio")
+                    .child(audioUri.getLastPathSegment());
 
             Log.d("AUDIO",audioUri.toString());
 
@@ -196,8 +198,8 @@ public class PreviewImage extends AppCompatActivity implements View.OnClickListe
                             progressDialog.dismiss();
                             @SuppressWarnings("VisibleForTests")
                             Uri uri = taskSnapshot.getDownloadUrl();
-                            mSenderDb.child(time+"/image/").setValue(uri);
-                            mReceiverDb.child(time+"/image/").setValue(uri);
+                            mSenderDb.child(time+"/image/").setValue(uri.toString());
+                            mReceiverDb.child(time+"/image/").setValue(uri.toString());
 //                            imageView.setVisibility(View.INVISIBLE);
                             //and displaying a success toast
                             Toast.makeText(getApplicationContext(), "File Uploaded ", Toast.LENGTH_LONG).show();
@@ -236,16 +238,11 @@ public class PreviewImage extends AppCompatActivity implements View.OnClickListe
 //                            imageView.setVisibility(View.INVISIBLE);
                             @SuppressWarnings("VisibleForTests")
                             Uri uri = taskSnapshot.getDownloadUrl();
-                            mSenderDb.child(time+"/audio/").setValue(uri).addOnFailureListener(PreviewImage.this, new OnFailureListener() {
-                                @Override
-                                public void onFailure(@NonNull Exception e) {
-                                    e.printStackTrace();
-                                }
-                            });
-                            mSenderDb.child(time+"/receiver/").setValue(SearchFriendAdapter.receiverId);
                             mSenderDb.child(time+"/sent/").setValue(true);
+                            mSenderDb.child(time+"/audio/").setValue(uri.toString());
+                            mSenderDb.child(time+"/receiver/").setValue(SearchFriendAdapter.receiverId);
 
-                            mReceiverDb.child(time+"/audio/").setValue(uri);
+                            mReceiverDb.child(time+"/audio/").setValue(uri.toString());
                             mReceiverDb.child(time+"/receiver/").setValue(FirebaseAuth.getInstance().getCurrentUser().getUid());
                             mReceiverDb.child(time+"/sent/").setValue(false);
 
