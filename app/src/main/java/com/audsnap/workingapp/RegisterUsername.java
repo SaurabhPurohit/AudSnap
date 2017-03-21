@@ -60,6 +60,7 @@ public class RegisterUsername extends AppCompatActivity {
 
                 showLoading();
                 Map<String,String> usernameMap=new HashMap<String, String>();
+                usernameMap.put("PICTURE","a");
                 usernameMap.put("USERNAME",mUsername.getText().toString());
                 usernameMap.put("PROVIDER",firebaseUser.getProviderId());
                 databaseReference.setValue(usernameMap, new DatabaseReference.CompletionListener() {

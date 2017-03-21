@@ -57,7 +57,7 @@ public class FragementHandler extends AppCompatActivity {
         firebaseAuth.addAuthStateListener(authStateListener);
 
 //        Log.e("Usernamebefore",username);
-        if(firebaseUser!=null) {
+        /*if(firebaseUser!=null) {
             if (username.equals("")) {
                 InsertUsername insertUsername = new InsertUsername(this);
                 Cursor cr = insertUsername.retriveUsername(insertUsername);
@@ -65,7 +65,7 @@ public class FragementHandler extends AppCompatActivity {
                 username = cr.getString(0);
 //                Log.e("Username", username);
             }
-        }
+        }*/
 
         if(b==false) {
             dir = new File(Environment.getExternalStorageDirectory() + "/AudSnap/");

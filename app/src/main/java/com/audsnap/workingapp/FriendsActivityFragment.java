@@ -39,9 +39,10 @@ public class FriendsActivityFragment extends Fragment {
 
     private RecyclerView recyclerView;
     private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-    private DatabaseReference friendsReference = firebaseDatabase.getReference("AudSnap/Friends/"+FirebaseAuth.getInstance()
+    private DatabaseReference friendsReference = firebaseDatabase.getReference("AudSnap/Friends/" + FirebaseAuth.getInstance()
             .getCurrentUser().getUid());
-    private DatabaseReference friendsInfoReference;
+
+    private DatabaseReference friendsInfoReference, profilePicReference = firebaseDatabase.getReference("AudSnap/Profiles/");
     private List<SearchFriendViewItem> searchFriendViewItems = new ArrayList<>();
     private ProgressBar progressBar;
     private TextView mNoFriendsLabel;
@@ -52,10 +53,10 @@ public class FriendsActivityFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
-        View v =inflater.inflate(R.layout.fragment_friends, container, false);
-        progressBar=(ProgressBar) v.findViewById(R.id.friendsProgressView);
-        mNoFriendsLabel=(TextView) v.findViewById(R.id.noFriendsTag);
+                             Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.fragment_friends, container, false);
+        progressBar = (ProgressBar) v.findViewById(R.id.friendsProgressView);
+        mNoFriendsLabel = (TextView) v.findViewById(R.id.noFriendsTag);
 
         setUpRecyclerView(v);
         setUpDatabseListener();
@@ -68,12 +69,10 @@ public class FriendsActivityFragment extends Fragment {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 searchFriendViewItems.clear();
-                if(dataSnapshot.getChildrenCount()==0)
-                {
+                if (dataSnapshot.getChildrenCount() == 0) {
                     mNoFriendsLabel.setVisibility(View.VISIBLE);
                     progressBar.setVisibility(View.GONE);
-                }
-                else {
+                } else {
                     mNoFriendsLabel.setVisibility(View.GONE);
 
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
@@ -86,20 +85,33 @@ public class FriendsActivityFragment extends Fragment {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                                SearchFriendViewItem searchFriendViewItem = new SearchFriendViewItem();
-                                searchFriendViewItem.setUsername(dataSnapshot.getValue().toString());
-                                searchFriendViewItem.setStatus(" ");
-                                searchFriendViewItem.setUserKey(key);
+                                final String userName = dataSnapshot.getValue().toString();
 
+                                profilePicReference.child(key + "/userinfo/PICTURE/").
+                                        addListenerForSingleValueEvent(new ValueEventListener() {
+                                            @Override
+                                            public void onDataChange(DataSnapshot dataSnapshot1) {
+                                                Log.d("PROFILE REFERENCE",profilePicReference.toString());
+                                                SearchFriendViewItem searchFriendViewItem = new SearchFriendViewItem();
+                                                searchFriendViewItem.setUsername(userName);
+                                                searchFriendViewItem.setStatus(" ");
+                                                searchFriendViewItem.setUserKey(key);
+                                                searchFriendViewItem.setPhotoUrl(dataSnapshot1.getValue().toString());
+                                                searchFriendViewItems.add(searchFriendViewItem);
+                                                recyclerView.getAdapter().notifyDataSetChanged();
+                                                progressBar.setVisibility(View.GONE);
+                                            }
 
-                                searchFriendViewItems.add(searchFriendViewItem);
-                                recyclerView.getAdapter().notifyDataSetChanged();
-                                progressBar.setVisibility(View.GONE);
+                                            @Override
+                                            public void onCancelled(DatabaseError databaseError) {
+
+                                            }
+                                        });
                             }
 
                             @Override
                             public void onCancelled(DatabaseError databaseError) {
-                                Toast.makeText(getContext(),"Error Retriving Your Friends",Toast.LENGTH_SHORT).show();
+                                Toast.makeText(getContext(), "Error Retriving Your Friends", Toast.LENGTH_SHORT).show();
                                 progressBar.setVisibility(View.GONE);
                             }
                         });
@@ -118,10 +130,10 @@ public class FriendsActivityFragment extends Fragment {
     }
 
     private void setUpRecyclerView(View v) {
-        recyclerView=(RecyclerView)v.findViewById(R.id.friendsRecyclerView);
+        recyclerView = (RecyclerView) v.findViewById(R.id.friendsRecyclerView);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
-        SearchFriendAdapter searchFriendAdapter=new SearchFriendAdapter(getContext(),searchFriendViewItems,true);
+        SearchFriendAdapter searchFriendAdapter = new SearchFriendAdapter(getContext(), searchFriendViewItems, true);
         recyclerView.setAdapter(searchFriendAdapter);
     }
 
@@ -141,7 +153,7 @@ public class FriendsActivityFragment extends Fragment {
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
-        inflater.inflate(R.menu.menu_friend,menu);
+        inflater.inflate(R.menu.menu_friend, menu);
     }
 
 }

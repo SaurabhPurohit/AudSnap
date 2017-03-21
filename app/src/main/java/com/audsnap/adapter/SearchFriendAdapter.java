@@ -73,7 +73,12 @@ public class SearchFriendAdapter extends RecyclerView.Adapter<SearchFriendAdapte
 
         boolean flag = searchFriendViewItem.isAdded();
 
-        Picasso.with(context).load(searchFriendViewItem.getPhotoUrl()).into(holder.mProfilePicture);
+        if(searchFriendViewItem.getPhotoUrl().equals("a")){
+            holder.mProfilePicture.setImageDrawable(context.getResources().getDrawable(R.drawable.default_avatar));
+        }
+        else {
+            Picasso.with(context).load(searchFriendViewItem.getPhotoUrl()).into(holder.mProfilePicture);
+        }
         if(!flagLayout){
 
             if(flag)
