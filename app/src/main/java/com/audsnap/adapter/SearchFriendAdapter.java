@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.audsnap.R;
 import com.audsnap.camera.DemoCamera;
+import com.audsnap.workingapp.ReceivedImagePreview;
 import com.audsnap.workingapp.SearchFriendActivity;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -39,7 +40,7 @@ public class SearchFriendAdapter extends RecyclerView.Adapter<SearchFriendAdapte
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference databaseReference;
     private String uid;
-    private boolean flagLayout=false;
+    private boolean flagLayout=false,previewLayout=false;
     public static String receiverId="";
 
     public SearchFriendAdapter(Context context, List<SearchFriendViewItem> data) {
@@ -52,7 +53,7 @@ public class SearchFriendAdapter extends RecyclerView.Adapter<SearchFriendAdapte
         databaseReference=firebaseDatabase.getReference("AudSnap/AddedFriends/"+uid);
     }
 
-    public SearchFriendAdapter(Context context, List<SearchFriendViewItem> data,boolean flagLayout) {
+    public SearchFriendAdapter(Context context, List<SearchFriendViewItem> data,boolean flagLayout,boolean previewLayout) {
 
         this.context = context;
         inflater = LayoutInflater.from(context);
@@ -61,7 +62,9 @@ public class SearchFriendAdapter extends RecyclerView.Adapter<SearchFriendAdapte
         uid=FirebaseAuth.getInstance().getCurrentUser().getUid();
         databaseReference=firebaseDatabase.getReference("AudSnap/AddedFriends/"+uid);
         this.flagLayout=flagLayout;
+        this.previewLayout=previewLayout;
     }
+
 
     @Override
     public MyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
@@ -93,7 +96,22 @@ public class SearchFriendAdapter extends RecyclerView.Adapter<SearchFriendAdapte
                 }
             });
         }
-        if(!flagLayout){
+
+        if(previewLayout)
+        {
+            holder.mAddedButton.setVisibility(View.GONE);
+            holder.mAddButton.setVisibility(View.GONE);
+            holder.mMainLayout.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    context.startActivity(new Intent(context, ReceivedImagePreview.class)
+                            .putExtra("image",searchFriendViewItem.getReceivedImageUrl())
+                            .putExtra("audio",searchFriendViewItem.getReceivedAudioUrl()));
+                }
+            });
+        }
+
+        if(!flagLayout && !previewLayout){
 
             if(flag)
             {

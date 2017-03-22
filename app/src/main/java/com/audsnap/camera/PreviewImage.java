@@ -51,8 +51,8 @@ public class PreviewImage extends AppCompatActivity implements View.OnClickListe
     private TextureView videoView;
     private StorageReference mStorageRef;
     private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-    private DatabaseReference mSenderDb = firebaseDatabase.getReference("/AudSnap/chat/"+FirebaseAuth.getInstance().getCurrentUser().getUid());
-    private DatabaseReference mReceiverDb = firebaseDatabase.getReference("/AudSnap/chat/"+ SearchFriendAdapter.receiverId);
+    private DatabaseReference mSenderDb = firebaseDatabase.getReference("/AudSnap/chat/"+FirebaseAuth.getInstance().getCurrentUser().getUid()+"/sent/");
+    private DatabaseReference mReceiverDb = firebaseDatabase.getReference("/AudSnap/chat/"+ SearchFriendAdapter.receiverId+"/received/");
     Uri uri;
     File audioFile;
 
@@ -203,6 +203,7 @@ public class PreviewImage extends AppCompatActivity implements View.OnClickListe
 //                            imageView.setVisibility(View.INVISIBLE);
                             //and displaying a success toast
                             Toast.makeText(getApplicationContext(), "File Uploaded ", Toast.LENGTH_LONG).show();
+                            finish();
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {
@@ -247,7 +248,7 @@ public class PreviewImage extends AppCompatActivity implements View.OnClickListe
                             mReceiverDb.child(time+"/sent/").setValue(false);
 
                             //and displaying a success toast
-                            Toast.makeText(getApplicationContext(), "File Uploaded ", Toast.LENGTH_LONG).show();
+                           // Toast.makeText(getApplicationContext(), "File Uploaded ", Toast.LENGTH_LONG).show();
                         }
                     })
                     .addOnFailureListener(new OnFailureListener() {

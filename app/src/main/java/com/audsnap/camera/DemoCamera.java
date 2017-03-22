@@ -210,6 +210,7 @@ public class DemoCamera extends AppCompatActivity implements Camera.PictureCallb
                             intent.putExtra("index",curentCameraIndex);
                             intent.putExtra("TIMEFORMAT",time);
                             startActivity(intent);
+                            finish();
                         }
                         else{
                            /* if(videofile.exists()){

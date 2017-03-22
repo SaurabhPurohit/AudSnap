@@ -133,7 +133,7 @@ public class FriendsActivityFragment extends Fragment {
         recyclerView = (RecyclerView) v.findViewById(R.id.friendsRecyclerView);
         RecyclerView.LayoutManager layoutManager = new LinearLayoutManager(getContext());
         recyclerView.setLayoutManager(layoutManager);
-        SearchFriendAdapter searchFriendAdapter = new SearchFriendAdapter(getContext(), searchFriendViewItems, true);
+        SearchFriendAdapter searchFriendAdapter = new SearchFriendAdapter(getContext(), searchFriendViewItems,true,false);
         recyclerView.setAdapter(searchFriendAdapter);
     }
 

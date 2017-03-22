@@ -10,6 +10,7 @@ public class SearchFriendViewItem {
     private String photoUrl;
     private boolean isAdded;
     private String userKey;
+    private String receivedImageUrl,receivedAudioUrl;
 
     public String getStatus() {
         return status;
@@ -49,5 +50,21 @@ public class SearchFriendViewItem {
 
     public void setUserKey(String userKey) {
         this.userKey = userKey;
+    }
+
+    public String getReceivedImageUrl() {
+        return receivedImageUrl;
+    }
+
+    public void setReceivedImageUrl(String receivedImageUrl) {
+        this.receivedImageUrl = receivedImageUrl;
+    }
+
+    public String getReceivedAudioUrl() {
+        return receivedAudioUrl;
+    }
+
+    public void setReceivedAudioUrl(String receivedAudioUrl) {
+        this.receivedAudioUrl = receivedAudioUrl;
     }
 }

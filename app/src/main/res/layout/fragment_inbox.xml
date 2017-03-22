@@ -9,16 +9,28 @@
     tools:context="com.audsnap.workingapp.InboxActivityFragment"
     android:background="#FFF" >
 
+   <android.support.v7.widget.RecyclerView
+       android:layout_width="match_parent"
+       android:layout_height="match_parent"
+       android:id="@+id/inboxRecyclerView"
+       />
+
     <TextView
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="inbox"/>
-    <Button
-        android:id="@+id/btn_open_cam"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="camera"
+        android:id="@+id/noItemToDisplay"
+        android:text="No Recent Messages"
+        android:textSize="15sp"
+        android:layout_centerInParent="true"
+        android:visibility="gone"
         />
 
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/inboxProgressBar"
+        android:layout_centerInParent="true"
+
+        />
 
 </RelativeLayout>
