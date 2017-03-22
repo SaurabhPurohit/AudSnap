@@ -69,7 +69,9 @@ public class InboxActivityFragment extends Fragment {
                 }
                 else {
                     textView.setVisibility(View.GONE);
+                    searchFriendViewItems.clear();
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
+
                         final InboxItem inboxItem = snapshot.getValue(InboxItem.class);
                         DatabaseReference databaseReference = firebaseDatabase.getReference("/AudSnap/Profiles/" +
                                 inboxItem.getReceiver() + "/userinfo/");
