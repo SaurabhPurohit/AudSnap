@@ -17,7 +17,8 @@ public class ReceivedImagePreview extends AppCompatActivity {
 
     private ImageView imageView;
     private ProgressBar progressBar;
-    private String imageUrl,audioUrl;
+    private String[] imageUrl,audioUrl;
+    private int j=0;
     private MediaPlayer mediaPlayer;
 
     @Override
@@ -28,15 +29,55 @@ public class ReceivedImagePreview extends AppCompatActivity {
         progressBar=(ProgressBar) findViewById(R.id.receivedImageProgress);
 
         Bundle bundle = getIntent().getExtras();
-        imageUrl = bundle.getString("image");
-        audioUrl = bundle.getString("audio");
+        String image = bundle.getString("image");
+        String audio = bundle.getString("audio");
 
-        Picasso.with(this).load(imageUrl).into(imageView, new Callback() {
+        if(image.contains(","))
+        {
+            imageUrl = image.split(",");
+        }
+        else {
+            imageUrl=new String[1];
+            imageUrl[0]=image;
+        }
+        if(audio.contains(","))
+        {
+            audioUrl=audio.split(",");
+        }
+        else {
+            audioUrl=new String[1];
+            audioUrl[0]=audio;
+        }
+        loadImage(0);
+        imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(imageUrl.length==j+1)
+                {
+                    finish();
+                }
+                else {
+                    if (mediaPlayer != null) {
+                        mediaPlayer.stop();
+                        mediaPlayer.release();
+                        mediaPlayer = null;
+                    }
+                    j++;
+                    loadImage(j);
+                }
+            }
+        });
+    }
+
+    private void loadImage(final int index)
+    {
+        progressBar.setVisibility(View.VISIBLE);
+        Picasso.with(this).load(imageUrl[index]).into(imageView, new Callback() {
             @Override
             public void onSuccess() {
                 try {
                     mediaPlayer = new MediaPlayer();
-                    mediaPlayer.setDataSource(getBaseContext(), Uri.parse(audioUrl));
+                    mediaPlayer.setDataSource(getBaseContext(), Uri.parse(audioUrl[index]));
                     mediaPlayer.prepare();
                     mediaPlayer.setLooping(true);
                     mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {

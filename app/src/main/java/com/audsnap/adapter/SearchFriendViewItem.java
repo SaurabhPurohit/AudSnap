@@ -11,6 +11,7 @@ public class SearchFriendViewItem {
     private boolean isAdded;
     private String userKey;
     private String receivedImageUrl,receivedAudioUrl;
+    private int number;
 
     public String getStatus() {
         return status;
@@ -66,5 +67,13 @@ public class SearchFriendViewItem {
 
     public void setReceivedAudioUrl(String receivedAudioUrl) {
         this.receivedAudioUrl = receivedAudioUrl;
+    }
+
+    public int getNumber() {
+        return number;
+    }
+
+    public void setNumber(int number) {
+        this.number = number;
     }
 }

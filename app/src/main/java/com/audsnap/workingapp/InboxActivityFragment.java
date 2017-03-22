@@ -43,6 +43,7 @@ public class InboxActivityFragment extends Fragment {
             FirebaseAuth.getInstance().getCurrentUser().getUid()+"/received/");
     private ProgressBar progressBar;
     private TextView textView;
+    private ArrayList<String> userIds = new ArrayList<>();
 
     public InboxActivityFragment() {}
 
@@ -70,6 +71,7 @@ public class InboxActivityFragment extends Fragment {
                 else {
                     textView.setVisibility(View.GONE);
                     searchFriendViewItems.clear();
+                    userIds.clear();
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
 
                         final InboxItem inboxItem = snapshot.getValue(InboxItem.class);
@@ -81,14 +83,27 @@ public class InboxActivityFragment extends Fragment {
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 com.audsnap.adapter.UserInfo userInfo = dataSnapshot.getValue(com.audsnap.adapter.UserInfo.class);
                                 SearchFriendViewItem searchFriendViewItem = new SearchFriendViewItem();
-                                searchFriendViewItem.setUserKey(inboxItem.getReceiver());
-                                searchFriendViewItem.setReceivedImageUrl(inboxItem.getImage());
-                                searchFriendViewItem.setReceivedAudioUrl(inboxItem.getAudio());
-                                searchFriendViewItem.setPhotoUrl(userInfo.getPICTURE());
-                                searchFriendViewItem.setUsername(userInfo.getUSERNAME());
-                                searchFriendViewItems.add(searchFriendViewItem);
-                                recyclerView.getAdapter().notifyDataSetChanged();
-                                progressBar.setVisibility(View.GONE);
+                                if(!userIds.contains(inboxItem.getReceiver())) {
+                                    userIds.add(inboxItem.getReceiver());
+                                    searchFriendViewItem.setUserKey(inboxItem.getReceiver());
+                                    searchFriendViewItem.setReceivedImageUrl(inboxItem.getImage());
+                                    searchFriendViewItem.setReceivedAudioUrl(inboxItem.getAudio());
+                                    searchFriendViewItem.setPhotoUrl(userInfo.getPICTURE());
+                                    searchFriendViewItem.setUsername(userInfo.getUSERNAME());
+                                    searchFriendViewItem.setNumber(1);
+                                    searchFriendViewItems.add(searchFriendViewItem);
+                                    recyclerView.getAdapter().notifyDataSetChanged();
+                                    progressBar.setVisibility(View.GONE);
+                                }
+                                else{
+                                    int position = userIds.indexOf(inboxItem.getReceiver());
+                                    SearchFriendViewItem item = searchFriendViewItems.get(position);
+                                    item.setReceivedImageUrl(item.getReceivedImageUrl()+","+inboxItem.getImage());
+                                    item.setReceivedAudioUrl(item.getReceivedAudioUrl()+","+inboxItem.getAudio());
+                                    item.setNumber(item.getNumber()+1);
+                                    searchFriendViewItems.set(position,item);
+                                    recyclerView.getAdapter().notifyDataSetChanged();
+                                }
                             }
 
                             @Override

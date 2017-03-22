@@ -101,6 +101,10 @@ public class SearchFriendAdapter extends RecyclerView.Adapter<SearchFriendAdapte
         {
             holder.mAddedButton.setVisibility(View.GONE);
             holder.mAddButton.setVisibility(View.GONE);
+
+            holder.mUnreadCount.setVisibility(View.VISIBLE);
+            holder.mUnreadCount.setText(String.valueOf(searchFriendViewItem.getNumber()));
+
             holder.mMainLayout.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
@@ -195,10 +199,11 @@ public class SearchFriendAdapter extends RecyclerView.Adapter<SearchFriendAdapte
     }
 
     class MyViewHolder extends RecyclerView.ViewHolder {
-        TextView mStatus,mUsername;
+        TextView mStatus,mUsername,mUnreadCount;
         FancyButton mAddButton,mAddedButton,mAddingButton;
         CircleImageView mProfilePicture;
         LinearLayout mMainLayout;
+
 
         public MyViewHolder(final View itemView) {
             super(itemView);
@@ -209,6 +214,7 @@ public class SearchFriendAdapter extends RecyclerView.Adapter<SearchFriendAdapte
             mAddingButton=(FancyButton) itemView.findViewById(R.id.addFriendProgressButton);
             mProfilePicture=(CircleImageView) itemView.findViewById(R.id.profile_image);
             mMainLayout=(LinearLayout) itemView.findViewById(R.id.searchMainLayout);
+            mUnreadCount=(TextView) itemView.findViewById(R.id.receivedMsgNumbers);
         }
     }
 }
