@@ -52,7 +52,7 @@ public class AddedMeActivity extends AppCompatActivity {
         addedFriendsDatabaseReference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-
+                addedMeViewItems.clear();
                 if(dataSnapshot.getChildrenCount()==0) {
                     noRequestText.setVisibility(View.VISIBLE);
                 }
