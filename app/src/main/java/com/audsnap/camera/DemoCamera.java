@@ -52,7 +52,7 @@ public class DemoCamera extends AppCompatActivity implements Camera.PictureCallb
     private ProgressBar progressBar;
     private MediaRecorder mMediaRecorder;
     private boolean isLive=false;
-    private AudioManager myAudioManager;
+//    private AudioManager myAudioManager;
 
     @TargetApi(Build.VERSION_CODES.M)
     @Override
@@ -60,9 +60,9 @@ public class DemoCamera extends AppCompatActivity implements Camera.PictureCallb
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         setContentView(R.layout.activity_demo_camera);
-        myAudioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
-        myAudioManager.setStreamMute(AudioManager.STREAM_SYSTEM,true);
-        myAudioManager.setStreamMute(AudioManager.STREAM_MUSIC,true);
+//        myAudioManager = (AudioManager)getSystemService(Context.AUDIO_SERVICE);
+//        myAudioManager.setStreamMute(AudioManager.STREAM_SYSTEM,true);
+//        myAudioManager.setStreamMute(AudioManager.STREAM_MUSIC,true);
         flashOn = (ImageButton) findViewById(R.id.button_flash_on);
         flashOff = (ImageButton) findViewById(R.id.button_flash_off);
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
